@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>일정 관리</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- 간단한 캘린더 라이브러리 예시 (optional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule" class="active">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">이슈관리</a>
+</nav>
+
+<div id="content">
+    <h1>일정 관리</h1>
+    <div id="schedule-container" class="schedule-container">
+        <div class="calendar-box">
+            <input id="calendar" placeholder="달력으로 일정 선택" readonly>
+        </div>
+        <div class="list-box">
+            <h2>최근 일정</h2>
+            <ul id="schedule-list-container"></ul>
+        </div>
+    </div>
+    <button class="btn" id="btn-add-schedule">새 일정 추가</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="/js/schedule.js"></script>
+</body>
+</html>

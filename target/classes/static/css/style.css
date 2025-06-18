@@ -1,4 +1,166 @@
-body { font-family: Arial; margin:0; }
-nav { background:#333; padding:10px; }
-nav a { color:#fff; margin-right:10px; text-decoration:none; }
-#content { padding:20px; }
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 내비게이션 */
+nav {
+  background: #2c3e50;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+nav a {
+  color: #ecf0f1;
+  text-decoration: none;
+  margin-right: 20px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+nav a:hover {
+  background: rgba(236,240,241,0.2);
+}
+nav a.active {
+  background: #e74c3c;
+  color: #fff;
+}
+
+/* 컨텐츠 영역 */
+#content {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+/* 프로젝트 카드 그리드 */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+.card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+.card-header {
+  background: #3498db;
+  color: #fff;
+  padding: 16px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+.card-body {
+  padding: 16px;
+}
+.card-body p {
+  margin-bottom: 12px;
+  color: #555;
+}
+.card-footer {
+  padding: 16px;
+  text-align: right;
+}
+.card-footer a {
+  background: #3498db;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: background 0.2s;
+}
+.card-footer a:hover {
+  background: #2980b9;
+}
+
+/* 버튼 */
+.btn {
+  display: inline-block;
+  background: #27ae60;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 20px;
+}
+.btn:hover {
+  background: #1e8449;
+}
+
+/* 반응형 */
+@media(max-width: 600px) {
+  nav {
+    justify-content: center;
+  }
+  nav a {
+    margin-right: 10px;
+    padding: 6px 10px;
+  }
+  .grid-container {
+    gap: 16px;
+  }
+}
+/* style.css 에 아래만 추가 */
+.schedule-container {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+}
+.calendar-box {
+  flex: 1;
+}
+#calendar {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.list-box {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  padding: 16px;
+}
+.list-box h2 {
+  margin-bottom: 12px;
+  color: #3498db;
+}
+#schedule-list {
+  list-style: none;
+}
+#schedule-list li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+#schedule-list li:last-child {
+  border-bottom: none;
+}
+#schedule-list li span.date {
+  font-weight: 600;
+  margin-right: 8px;
+  color: #2c3e50;
+}

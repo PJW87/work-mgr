@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>업무 관리</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<nav>
+    <a href="/"       >홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks" class="active">업무관리</a>
+    <a href="/issues" >이슈관리</a>
+</nav>
+
+<div id="content">
+    <h1>업무 관리</h1>
+    <div id="task-list-container">
+        <ul id="task-list" class="list-box">
+            <!-- JS에서 DB 데이터 받아와서 <li>로 채웁니다 -->
+        </ul>
+    </div>
+    <button id="btn-add-task" class="btn">업무 등록</button>
+</div>
+
+<script src="/js/tasks.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>프로젝트 관리</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects" class="active">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">이슈관리</a>
+</nav>
+
+<div id="content">
+    <h1>프로젝트 리스트</h1>
+    <div id="project-list-container" class="grid-container">
+        <!-- 예시 카드, 서버에서 렌더링하거나 JS로 동적 생성 -->
+        <div class="card">
+            <div class="card-header">프로젝트 A</div>
+            <div class="card-body">
+                <p>간단한 설명…</p>
+            </div>
+            <div class="card-footer">
+                <a href="/projects/1">관리하기</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">프로젝트 B</div>
+            <div class="card-body">
+                <p>간단한 설명…</p>
+            </div>
+            <div class="card-footer">
+                <a href="/projects/2">관리하기</a>
+            </div>
+        </div>
+        <!-- … -->
+    </div>
+
+    <button id="btn-new-project" class="btn">새 프로젝트 생성</button>
+</div>
+
+<script src="/js/projects.js"></script>
+</body>
+</html>

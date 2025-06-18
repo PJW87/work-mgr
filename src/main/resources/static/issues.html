@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>이슈 관리</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues" class="active">이슈관리</a>
+</nav>
+
+<div id="content">
+    <h1>이슈 기록</h1>
+
+    <div id="issue-actions" style="margin-bottom:20px;">
+        <input id="issue-search" type="text" placeholder="검색어 입력" />
+        <button id="btn-search-issue" class="btn">검색</button>
+        <button id="btn-add-issue" class="btn">이슈 등록</button>
+    </div>
+
+    <div id="issue-list-container">
+        <ul id="issue-list" class="list-box">
+            <!-- JS에서 DB 데이터 받아와서 <li>로 채웁니다 -->
+        </ul>
+    </div>
+</div>
+
+<script src="/js/issues.js"></script>
+</body>
+</html>
