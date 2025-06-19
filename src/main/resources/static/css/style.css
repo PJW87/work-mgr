@@ -89,6 +89,38 @@ nav a.active {
   font-size: 0.9em;
   transition: background 0.2s;
 }
+/* 관리하기 버튼 (파랑) */
+.card-footer .btn-manage,
+.card-footer .btn-edit {
+  background: #3498db;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 6px;
+}
+.card-footer .btn-manage:hover,
+.card-footer .btn-edit:hover {
+  background: #2980b9;
+}
+
+/* 삭제 버튼 (빨강) */
+.card-footer .btn-delete {
+  background: #e74c3c;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.card-footer .btn-delete:hover {
+  background: #c0392b;
+}
 .card-footer a:hover {
   background: #2980b9;
 }
@@ -163,4 +195,82 @@ nav a.active {
   font-weight: 600;
   margin-right: 8px;
   color: #2c3e50;
+}
+/* overlay 기본은 가려짐(hidden) */
+.hidden {
+  display: none !important;
+}
+
+/* 반투명 배경 */
+#modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+/* 모달 박스 크기·스타일 */
+#modal {
+  background: #fff;
+  padding: 24px 32px;
+  border-radius: 12px;
+  width: 400px;          /* 너비 키움 */
+  max-width: 90%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+/* 제목 */
+#modal h2 {
+  margin-bottom: 16px;
+  font-size: 1.4em;
+  color: #2c3e50;
+}
+
+/* 폼 레이아웃 */
+#form-new-project label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.95em;
+  color: #444;
+}
+#form-new-project input[type="text"],
+#form-new-project input[type="month"],
+#form-new-project textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95em;
+  margin-top: 4px;
+}
+#form-new-project textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+/* 버튼 그룹 */
+.modal-actions {
+  margin-top: 20px;
+  text-align: right;
+}
+.modal-actions .btn {
+  padding: 10px 18px;
+  font-size: 0.95em;
+  border-radius: 6px;
+  margin-left: 8px;
+}
+.modal-actions .btn:first-child {
+  background: #27ae60;
+}
+.modal-actions .btn:first-child:hover {
+  background: #1e8449;
+}
+.modal-actions .btn:last-child {
+  background: #e74c3c;
+}
+.modal-actions .btn:last-child:hover {
+  background: #c0392b;
 }

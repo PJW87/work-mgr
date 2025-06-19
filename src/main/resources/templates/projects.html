@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>프로젝트 관리</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">이슈관리</a>
+</nav>
+
+<div id="content">
+    <h1>프로젝트 리스트</h1>
+
+    <!-- 카드 리스트 -->
+    <div id="project-list-container" class="grid-container">
+        <div class="card" th:each="proj : ${projects}">
+            <div class="card-header" th:text="${proj.name}">프로젝트명</div>
+            <div class="card-body">
+                <p th:text="${proj.description}">설명…</p>
+                <p>시작일: <span th:text="${#dates.format(proj.startDate, 'yyyy-MM')}">2023-07</span></p>
+            </div>
+            <div class="card-footer">
+                <a th:href="@{/projects/{id}(id=${proj.id})}">관리하기</a>
+                <button type="button" class="btn btn-delete" th:attr="data-id=${proj.id}">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 새 프로젝트 생성 버튼 -->
+    <button id="btn-new-project" class="btn">새 프로젝트 생성</button>
+</div>
+
+<!-- 모달 팝업 (같은 폼으로 생성/수정 처리) -->
+<div id="modal-overlay" class="hidden">
+    <div id="modal" class="modal">
+        <h2 id="modal-title">새 프로젝트 생성</h2>
+        <form id="form-new-project">
+            <input type="hidden" name="id" />
+            <label>
+                이름<br/>
+                <input type="text" name="name" required />
+            </label>
+            <label>
+                설명<br/>
+                <textarea name="description"></textarea>
+            </label>
+            <label>
+                시작 연월<br/>
+                <input type="month" name="startDate" required />
+            </label>
+            <div class="modal-actions">
+                <button type="submit" class="btn">저장</button>
+                <button type="button" id="btn-cancel-modal" class="btn">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/projects.js"></script>
+</body>
+</html>

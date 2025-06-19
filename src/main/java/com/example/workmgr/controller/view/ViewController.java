@@ -1,4 +1,4 @@
-package com.example.workmgr.controller;
+package com.example.workmgr.controller.view;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,18 +8,21 @@ public class ViewController {
 
     @GetMapping("/projects")
     public String projects() {
-        return "forward:/projects.html";
+        return "projects";
     }
+
     @GetMapping("/schedule")
     public String schedule() {
-        return "forward:/schedule.html";
+        return "schedule";
     }
+
     @GetMapping("/tasks")
     public String tasks() {
-        return "forward:/tasks.html";
+        return "tasks";
     }
+
     @GetMapping("/issues")
     public String issues() {
-        return "forward:/issues.html";
+        return "issues";
     }
 }
