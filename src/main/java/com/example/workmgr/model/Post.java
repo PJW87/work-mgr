@@ -15,6 +15,7 @@ public class Post {
     private String author;       // 작성자
     private String title;        // 제목
     private String content;      // 본문
+    private String status;
     private LocalDateTime createdAt; // 작성 일시
     private LocalDateTime updatedAt; // 수정 일시
 }

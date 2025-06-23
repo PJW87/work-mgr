@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title th:text="${detail.post.title}">게시글 상세</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/posts-view.css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var PROJECT_ID = [[${project.id}]];
+        var BOARD_ID   = [[${board.id}]];
+        var POST_ID    = [[${detail.post.id}]];
+        /*]]>*/
+    </script>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}">홈</a>
+    <a th:href="@{/projects}">프로젝트관리</a>
+    <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id},bid=${board.id})}">← 게시판 리스트</a>
+</nav>
+
+<div id="content">
+    <div class="post-card">
+        <div class="post-header">
+            <h2 th:text="${detail.post.title}">제목</h2>
+            <div class="post-meta">
+                <span>작성자: <strong th:text="${detail.post.author}"/></span>
+                <span>상태: <strong th:text="${detail.post.status}"/></span>
+                <span>등록일: <strong th:text="${#dates.format(detail.post.createdAt, 'yyyy-MM-dd')}"/></span>
+            </div>
+        </div>
+
+        <div class="post-body" th:utext="${detail.post.content}">
+            본문 내용
+        </div>
+
+        <div class="post-attachments" th:if="${detail.attachments.size() > 0}">
+            <h3>첨부파일</h3>
+            <ul>
+                <li th:each="att : ${detail.attachments}">
+                    <a th:href="${att.storagePath}" th:text="${att.filename}" target="_blank"></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="post-actions">
+            <button id="btn-edit" class="btn btn-primary">수정</button>
+            <button id="btn-delete" class="btn btn-secondary">삭제</button>
+            <button id="btn-list" class="btn">목록으로</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/projects/boards/post-view.js"></script>
+</body>
+</html>

@@ -1,9 +1,12 @@
 package com.example.workmgr.controller.rest;
 
 import com.example.workmgr.mapper.AttachmentMapper;
+import com.example.workmgr.mapper.BoardMapper;
 import com.example.workmgr.mapper.PostMapper;
 import com.example.workmgr.model.Attachment;
+import com.example.workmgr.model.PageResultDto;
 import com.example.workmgr.model.Post;
+import com.example.workmgr.model.PostDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,50 +18,71 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+// src/main/java/com/example/workmgr/controller/rest/PostRestController.java
 @RestController
-@RequestMapping("/api/projects/{pid}/boards/{bid}/posts")
 @RequiredArgsConstructor
+@RequestMapping("/api/projects/{pid}/boards/{bid}/posts")
 public class PostRestController {
-    private final PostMapper postMapper;
+    private final PostMapper       postMapper;
     private final AttachmentMapper attMapper;
+    private final BoardMapper boardMapper;  // 게시판 매퍼 추가
 
     @GetMapping
-    public List<Post> list(@PathVariable Long bid) {
-        return postMapper.findByBoard(bid);
+    public PageResultDto.PageResult<Post> list(
+            @PathVariable Long bid,
+            @RequestParam(defaultValue="0") int page,
+            @RequestParam(defaultValue="10") int size
+    ) {
+        int total = postMapper.countByBoard(bid);
+        List<Post> data = postMapper.findByBoard(bid, page*size, size);
+        return new PageResultDto.PageResult<>(data, total, page, size);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> get(@PathVariable Long id) {
+    public ResponseEntity<PostDetail> get(@PathVariable Long id) {
         Post p = postMapper.findById(id);
-        return p!=null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
+        if (p==null) return ResponseEntity.notFound().build();
+        List<Attachment> files = attMapper.findByPost(id);
+        return ResponseEntity.ok(new PostDetail(p, files));
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Post> create(
-            @PathVariable Long bid,
+            @PathVariable("bid") Long bid,
             @RequestPart("post") Post post,
             @RequestPart(value="files", required=false) List<MultipartFile> files
     ) throws IOException {
+
+        // 게시판 존재 여부 확인
+        if (boardMapper.findById(bid) == null) {
+            return ResponseEntity.badRequest().body(null); // 게시판이 없으면 400 Bad Request 반환
+        }
         post.setBoardId(bid);
         postMapper.insert(post);
-        if(files!=null) {
-            for(var f: files) {
-                String url = saveFileToDisk(f);
-                Attachment att = new Attachment(post.getId(), f.getOriginalFilename(), url);
-                attMapper.insert(att);
-            }
+        if(files!=null) for(var f: files){
+            String stored = saveFile(f);
+            Attachment a = new Attachment(post.getId(),
+                    f.getOriginalFilename(),
+                    stored,
+                    f.getContentType(),
+                    f.getSize());
+            attMapper.insert(a);
         }
         return ResponseEntity.ok(post);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
+            @PathVariable Long bid,
             @PathVariable Long id,
-            @RequestBody Post post
-    ) {
+            @RequestPart("post") Post post,
+            @RequestPart(value="files", required=false) List<MultipartFile> files
+    ) throws IOException {
         post.setId(id);
-        int cnt = postMapper.update(post);
-        return cnt>0 ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        post.setBoardId(bid);
+        if(postMapper.update(post)==0) return ResponseEntity.notFound().build();
+        // (첨부파일 추가 로직 생략 가능)
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
@@ -67,11 +91,10 @@ public class PostRestController {
         return ResponseEntity.noContent().build();
     }
 
-    // (파일 저장 구현 예시)
-    private String saveFileToDisk(MultipartFile file) throws IOException {
+    private String saveFile(MultipartFile f) throws IOException {
         String folder = "/var/www/app/uploads/";
-        String newName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Files.copy(file.getInputStream(), Paths.get(folder + newName));
-        return "/uploads/" + newName;
+        String name   = UUID.randomUUID()+"_"+f.getOriginalFilename();
+        Files.copy(f.getInputStream(), Paths.get(folder,name));
+        return "/uploads/"+name;
     }
 }

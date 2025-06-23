@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>게시글 리스트</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/posts.css"/>
+</head>
+<body>
+<script th:inline="javascript">
+    const PROJECT_ID = [[${project.id}]];
+    const BOARD_ID = [[${board.id}]];
+</script>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a th:href="@{/projects/{pid}/boards(pid=${project.id})}">게시판 리스트</a>
+    <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id}, bid=${board.id})}" class="active">게시글 리스트</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">이슈관리</a>
+    <!-- 기타 메뉴 -->
+</nav>
+
+<div id="content">
+    <!-- 뒤로 가기 버튼 -->
+    <p>
+        <a th:href="@{/projects/{pid}/boards(pid=${project.id})}"
+           class="btn btn-secondary">
+            ← 게시판 리스트로
+        </a>
+    </p>
+    <h1>
+        <span th:text="${project.name}">프로젝트명</span> /
+        <span th:text="${board.name}">게시판명</span> – 게시글 리스트
+    </h1>
+
+    <button id="btn-new-post" class="btn btn-primary">새 글쓰기</button>
+
+    <table class="post-table">
+        <thead>
+        <tr>
+            <th><input type="checkbox" id="chk-all"/></th>
+            <th>No</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>상태</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody id="post-list">
+        <!-- JS로 렌더링 -->
+        </tbody>
+    </table>
+    <button id="btn-batch-delete" class="btn btn-secondary">선택 삭제</button>
+    <div id="pagination"></div>
+</div>
+
+<!-- 모달 팝업 -->
+<div id="modal-overlay" class="hidden">
+    <div id="modal" class="modal">
+        <h2 class="modal-title">새 글쓰기</h2>
+        <form id="form-post" enctype="multipart/form-data">
+            <input type="hidden" name="postId"/>
+            <div class="form-group">
+                <label>제목<input type="text" name="title" required/></label>
+            </div>
+            <div class="form-group">
+                <label>작성자<input type="text" name="author" required/></label>
+            </div>
+            <div class="form-group">
+                <label>상태
+                    <select name="status">
+                        <option value="OPEN">열림</option>
+                        <option value="IN_PROGRESS">진행 중</option>
+                        <option value="RESOLVED">해결됨</option>
+                        <option value="CLOSED">종료</option>
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>본문</label>
+                <div id="editor" contenteditable="true"
+                     class="editor"
+                     placeholder="여기에 드래그&amp;드롭으로 이미지 삽입 가능합니다."></div>
+            </div>
+            <div class="form-group">
+                <label>파일첨부<input type="file" name="files" multiple/></label>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="btn-save" class="btn btn-primary">저장</button>
+                <button type="button" id="btn-cancel" class="btn btn-secondary">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/projects/boards/posts.js"></script>
+</body>
+</html>
