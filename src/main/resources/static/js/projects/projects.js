@@ -145,7 +145,7 @@ function attachActionHandlers() {
   document.querySelectorAll('.btn-manage').forEach(btn => {
     btn.addEventListener('click', e => {
       const id = e.target.dataset.id;
-      window.location.href = `/projects/${id}`;
+      window.location.href = `/projects/${id}/boards`;
     });
   });
 }

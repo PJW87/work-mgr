@@ -52,6 +52,8 @@ nav a.active {
   margin-top: 20px;
 }
 .card {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
@@ -70,6 +72,7 @@ nav a.active {
   font-weight: 600;
 }
 .card-body {
+  flex: 1;
   padding: 16px;
 }
 .card-body p {
@@ -77,6 +80,7 @@ nav a.active {
   color: #555;
 }
 .card-footer {
+  margin-top: auto;
   padding: 16px;
   text-align: right;
 }

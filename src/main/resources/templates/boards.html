@@ -1,0 +1,74 @@
+<!-- src/main/resources/templates/boards.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>게시판 리스트</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <!-- boards 전용 스타일 -->
+    <link rel="stylesheet" href="/css/boards.css"/>
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">이슈관리</a>
+</nav>
+
+<div id="content">
+    <!-- 여기가 바뀐 부분 -->
+    <h1>
+        <span th:text="${project.name}">프로젝트명</span> - 게시판 리스트
+    </h1>
+
+    <div class="grid-container">
+        <div class="card" th:each="b : ${boards}">
+            <div class="card-header" th:text="${b.name}">게시판명</div>
+            <div class="card-body">
+                <p th:text="${b.description}">설명</p>
+            </div>
+            <div class="card-footer">
+                <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id}, bid=${b.id})}"
+                   class="btn">게시글 보기</a>
+                <button class="btn btn-edit" th:attr="data-id=${b.id}">수정</button>
+                <button class="btn btn-delete" th:attr="data-id=${b.id}">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="btn-new-board" class="btn">새 게시판 생성</button>
+</div>
+
+<!-- 모달 (스텁) -->
+<div id="modal-overlay">
+    <div id="modal" class="modal">
+        <h2 class="modal-title">새 게시판 생성</h2>
+        <form id="form-new-board" class="modal-form">
+            <input type="hidden" name="projectId" th:value="${projectId}"/>
+
+            <div class="form-group">
+                <label for="board-name">게시판명</label>
+                <input id="board-name" type="text" name="name" required />
+            </div>
+
+            <div class="form-group">
+                <label for="board-desc">설명</label>
+                <textarea id="board-desc" name="description" rows="3"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary">생성</button>
+                <button type="button" id="btn-cancel-modal" class="btn btn-secondary">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:inline="javascript">
+    const PROJECT_ID = [[${project.id}]];
+</script>
+<script src="/js/projects/boards/boards.js"></script>
+</body>
+</html>

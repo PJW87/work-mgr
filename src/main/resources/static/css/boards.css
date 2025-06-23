@@ -1,0 +1,94 @@
+/* src/main/resources/static/css/board.css */
+
+/* 오버레이 기본 숨김 (style.css보다 우선순위 높게) */
+#modal-overlay {
+  display: none !important;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* active 되었을 때만 보임 */
+#modal-overlay.active {
+  display: flex !important;
+}
+
+/* 모달 박스 */
+#modal {
+  background: #fff;
+  border-radius: 10px;
+  width: 360px;
+  max-width: 90%;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+/* 모달 제목 */
+.modal-title {
+  margin-bottom: 16px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* 폼 그룹 */
+.modal-form .form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.modal-form label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #34495e;
+}
+.modal-form input[type="text"],
+.modal-form textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95em;
+}
+.modal-form input[type="text"]:focus,
+.modal-form textarea:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* 액션 버튼 */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn-primary {
+  background: #3498db;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #2980b9;
+}
+.btn-secondary {
+  background: #e74c3c;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: #c0392b;
+}
