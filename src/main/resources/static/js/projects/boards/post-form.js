@@ -9,43 +9,136 @@ document.addEventListener('DOMContentLoaded', () => {
   const postId = POST_ID;
 
   editor.addEventListener('dragover', e => e.preventDefault());
-    editor.addEventListener('drop', async e => {
-      e.preventDefault();
-      const file = e.dataTransfer.files[0];
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = document.createElement('img');
-        img.src = reader.result;
-        img.style.maxWidth = '100%';
-        editor.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
 
-  // 저장 버튼
-   btnSave.addEventListener('click', async () => {
-     // 1) editor의 내용을 hidden 필드로 복사
-     hidden.value = editor.innerHTML;
+  editor.addEventListener('drop', async e => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (!file.type.startsWith('image/')) return;
 
-     // 2) FormData 준비
-     const fd = new FormData(form);
-     // 만약 파일도 JSON과 함께 이중 전송해야 하면, 이전에 사용하던 fetch Multipart 방식으로 변경
+    try {
+      // 서버에 이미지 업로드
+      const formData = new FormData();
+      formData.append('file', file);
 
-     // 3) REST 호출
-     const method = postId ? 'PUT' : 'POST';
-     const url    = postId
-       ? `/api/projects/${pid}/boards/${bid}/posts/${postId}`
-       : `/api/projects/${pid}/boards/${bid}/posts`;
+      // 이미지 업로드 API 호출 (서버에 구현 필요)
+      const res = await fetch(`/api/projects/${pid}/boards/${bid}/posts/images`, {
+        method: 'POST',
+        body: formData
+      });
 
-     const res = await fetch(url, { method, body: fd });
-     if (!res.ok) return alert('저장 실패');
-     // 목록 페이지로 복귀
-     window.location.href = `/projects/${pid}/boards/${bid}/posts`;
-   });
+      if (!res.ok) {
+        alert('이미지 업로드 실패');
+        return;
+      }
+
+      const data = await res.json();
+      // 서버가 반환한 이미지 URL (예: { url: "/uploads/abc.jpg" })
+      const imageUrl = data.url;
+
+      // 본문에 이미지 삽입
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.style.maxWidth = '100%';
+      editor.appendChild(img);
+
+    } catch (err) {
+      console.error(err);
+      alert('이미지 업로드 중 오류가 발생했습니다.');
+    }
+  });
+
+  btnSave.addEventListener('click', async () => {
+    // editor 내용 hidden 필드에 복사
+    hidden.value = editor.innerHTML;
+
+    // Post 객체 생성
+    const p = {
+      title: form.title.value.trim(),
+      author: form.author.value.trim(),
+      status: form.status.value,
+      content: editor.innerHTML
+    };
+
+    const fd = new FormData();
+    fd.append('post', new Blob([JSON.stringify(p)], { type: 'application/json' }));
+
+    // 파일 첨부가 있으면 추가
+    for (let f of form.files.files) {
+      fd.append('files', f);
+    }
+
+    const method = postId ? 'PUT' : 'POST';
+    const url = postId
+      ? `/api/projects/${pid}/boards/${bid}/posts/${postId}`
+      : `/api/projects/${pid}/boards/${bid}/posts`;
+
+    const res = await fetch(url, { method, body: fd });
+    if (!res.ok) return alert('저장 실패');
+    window.location.href = `/projects/${pid}/boards/${bid}/posts`;
+  });
 
   // 취소 버튼
   btnCancel.addEventListener('click', () => {
     window.location.href = `/projects/${pid}/boards/${bid}/posts`;
   });
+  document.querySelectorAll('.btn-attachment-delete').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const attachId = e.currentTarget.dataset.id;
+        if (!confirm('정말 이 첨부파일을 삭제하시겠습니까?')) return;
+
+        // REST 호출: 파일만 삭제하는 엔드포인트 필요
+        const res = await fetch(`/api/attachments/${attachId}`, {
+          method: 'DELETE'
+        });
+        if (!res.ok) {
+          return alert('첨부파일 삭제에 실패했습니다.');
+        }
+        // 삭제 성공했으면 li 요소를 제거
+            const li = btn.closest('li');
+            if (li) {
+              li.remove();
+            }
+      });
+    });
+
+  // 기존 코드 아래쪽에 추가
+      interact('.editor img')
+        .resizable({
+          edges: { left: true, right: true, bottom: true, top: true },
+          preserveAspectRatio: true,
+        })
+        .on('resizemove', function (event) {
+          const img = event.target;
+          // 새로운 크기 적용
+          img.style.width  = event.rect.width + 'px';
+          img.style.height = event.rect.height + 'px';
+        });
+
+const observer = new MutationObserver(mutations => {
+    for (const mut of mutations) {
+      // removedNodes 에 이미지가 있는지 찾아서 삭제 API 콜
+     mut.removedNodes.forEach(node => {
+       if (node.nodeName === 'IMG') {
+         // fullSrc 예: "http://localhost:8080/uploads/abc.jpg"
+         const fullSrc = node.src;
+
+         // 1) URL API 로 부터 path ("/uploads/abc.jpg") 만 추출
+         const urlObj = new URL(fullSrc, window.location.origin);
+         const uploadPath = urlObj.pathname; // "/uploads/abc.jpg"
+
+         // 2) 서버에 DELETE 요청
+         fetch(
+           `/api/projects/${PROJECT_ID}/boards/${BOARD_ID}/posts/images?path=${encodeURIComponent(uploadPath)}`,
+           { method: 'DELETE' }
+         ).catch(console.error);
+       }
+     });
+    }
+  });
+
+  observer.observe(editor, {
+    childList: true,
+    subtree: true
+  });
+
 });

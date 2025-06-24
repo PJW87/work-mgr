@@ -24,7 +24,19 @@ public interface PostMapper {
                            @Param("offset")  int offset,
                            @Param("limit")   int limit);
 
-    @Select("SELECT * FROM posts WHERE id=#{id}")
+    @Select("""
+      SELECT
+        id,
+        board_id      AS boardId,
+        title,
+        content,
+        author,
+        status,
+        created_at    AS createdAt,
+        updated_at    AS updatedAt
+      FROM posts
+      WHERE id = #{id}
+    """)
     Post findById(Long id);
 
     @Insert("""

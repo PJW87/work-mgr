@@ -15,6 +15,7 @@
         var POST_ID    = /*[[${post.id}]]*/ null;
     </script>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <body>
 <nav>
     <a th:href="@{/}">홈</a>
@@ -66,7 +67,21 @@
             <label for="files">파일첨부</label>
             <input id="files" type="file" name="files" multiple/>
         </div>
-
+        <div class="form-group" th:if="${attachments != null && !attachments.isEmpty()}">
+            <label>기존 첨부파일</label>
+            <ul class="existing-attachments">
+                <li th:each="f : ${attachments}">
+                    <a th:href="@{/api/attachments/{id}/download(id=${f.id})}"
+                       th:text="${f.filename}">파일명</a>
+                    <!-- 삭제 버튼 -->
+                    <button type="button"
+                            class="btn btn-link btn-attachment-delete"
+                            th:data-id="${f.id}">
+                        삭제
+                    </button>
+                </li>
+            </ul>
+        </div>
         <div class="form-actions">
             <button type="button" class="btn btn-primary"
                     id="btn-save"
@@ -75,7 +90,14 @@
         </div>
     </form>
 </div>
-
+<script th:inline="javascript">
+    let imagesBefore = [];
+    document.addEventListener('DOMContentLoaded', () => {
+      // 에디터 안에 이미 로드된 img URL 목록을 저장
+      imagesBefore = Array.from(document.querySelectorAll('#editor img'))
+                          .map(img => img.src);
+    });
+</script>
 <script src="/js/projects/boards/post-form.js"></script>
 </body>
 </html>

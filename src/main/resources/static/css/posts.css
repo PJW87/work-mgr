@@ -164,3 +164,46 @@ ul li { margin-bottom:6px; }
 
 /* actions */
 .view-actions { margin-top:20px; }
+.editor img {
+  max-width: 100%;
+  height: auto;
+  resize: both;
+  overflow: auto;         /* resize 를 활성화하려면 overflow:auto 가 필요합니다 */
+  display: inline-block;   /* resize 핸들이 제대로 보이게 */
+}
+/* posts.css 에 추가하세요 */
+
+/* 상태 cell 자체에는 배경을 지우고 */
+.post-table .cell-status {
+  background: none;
+  justify-content: center;  /* 수평 중앙 정렬 */
+  align-items: center;      /* 수직 중앙 정렬 */
+  padding: 0px 6px;          /* 셀 패딩 제거 */
+}
+
+/* 뱃지 역할을 할 span */
+.post-table .cell-status .badge {
+  display: inline-block;
+  padding: 2px 6px;           /* 살짝만 여백 */
+  font-size: 0.85em;          /* 텍스트 크기 작게 */
+  border-radius: 12px;        /* pill 모양 */
+  font-weight: 600;
+}
+
+/* 상태별 컬러 정의 */
+.post-table .cell-status[data-status="OPEN"] .badge {
+  background-color: #e2f0d9;
+  color: #2e7d32;
+}
+.post-table .cell-status[data-status="IN_PROGRESS"] .badge {
+  background-color: #fff4e5;
+  color: #ef6c00;
+}
+.post-table .cell-status[data-status="RESOLVED"] .badge {
+  background-color: #e1f5fe;
+  color: #0288d1;
+}
+.post-table .cell-status[data-status="CLOSED"] .badge {
+  background-color: #fbe9e7;
+  color: #d32f2f;
+}

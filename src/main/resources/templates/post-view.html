@@ -28,7 +28,11 @@
             <div class="post-meta">
                 <span>작성자: <strong th:text="${detail.post.author}"/></span>
                 <span>상태: <strong th:text="${detail.post.status}"/></span>
-                <span>등록일: <strong th:text="${#dates.format(detail.post.createdAt, 'yyyy-MM-dd')}"/></span>
+                <span>등록일: <strong th:text="${detail.post.createdAt != null
+      ? #temporals.format(detail.post.createdAt,'yyyy-MM-dd hh:mm')
+      : '-'}">
+  </strong>
+</span>
             </div>
         </div>
 
@@ -39,8 +43,14 @@
         <div class="post-attachments" th:if="${detail.attachments.size() > 0}">
             <h3>첨부파일</h3>
             <ul>
-                <li th:each="att : ${detail.attachments}">
-                    <a th:href="${att.storagePath}" th:text="${att.filename}" target="_blank"></a>
+                <li th:each="f : ${detail.attachments}">
+                    <a
+                            th:href="@{/api/attachments/{id}/download(id=${f.id})}"
+                            th:text="${f.filename}"
+                            th:attr="download=${f.filename}"
+                    >
+                    파일명
+                    </a>
                 </li>
             </ul>
         </div>

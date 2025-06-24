@@ -37,7 +37,9 @@ function renderTable(data) {
         </a>
       </td>
       <td>${p.author}</td>
-      <td>${translateStatus(p.status)}</td>
+       <td class="cell-status" data-status="${p.status}">
+               <span class="badge">${translateStatus(p.status)}</span>
+             </td>
       <td>${p.createdAt.slice(0,10)}</td>
     </tr>
   `).join('');

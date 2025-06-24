@@ -1,12 +1,13 @@
+<!-- src/main/resources/templates/schedule.html -->
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>일정 관리</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <!-- 간단한 캘린더 라이브러리 예시 (optional) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>일정관리</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/schedule.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 </head>
 <body>
 <nav>
@@ -18,20 +19,64 @@
 </nav>
 
 <div id="content">
-    <h1>일정 관리</h1>
-    <div id="schedule-container" class="schedule-container">
-        <div class="calendar-box">
-            <input id="calendar" placeholder="달력으로 일정 선택" readonly>
-        </div>
-        <div class="list-box">
-            <h2>최근 일정</h2>
-            <ul id="schedule-list-container"></ul>
+    <div id="left-panel">
+        <h1>일정관리</h1>
+        <div id="calendar-container">
+            <div id="calendar" style="max-width:800px; margin:auto;"></div>
+            <div style="text-align:center; margin-top:16px;">
+                <button id="btn-new" class="btn btn-primary">새 일정 추가</button>
+            </div>
         </div>
     </div>
-    <button class="btn" id="btn-add-schedule">새 일정 추가</button>
+    <aside id="right-panel">
+        <h2>최근 일정</h2>
+        <ul id="upcoming-list"></ul>
+    </aside>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="/js/schedule.js"></script>
+<!-- 등록/수정 모달 (기존) -->
+<div id="modal-schedule" class="modal hidden">
+    <div class="modal-content">
+        <h2 id="modal-title">새 일정</h2>
+        <form id="form-schedule">
+            <input type="hidden" name="id"/>
+            <div class="form-group">
+                <label>제목 <input type="text" name="title" required/></label>
+            </div>
+            <div class="form-group">
+                <label>내용 <textarea name="content" rows="4"></textarea></label>
+            </div>
+            <div class="form-group">
+                <label>시작 <input type="datetime-local" name="startDate" required/></label>
+            </div>
+            <div class="form-group">
+                <label>종료 <input type="datetime-local" name="endDate"/></label>
+            </div>
+            <div class="actions">
+                <button type="button" id="save-sched" class="btn btn-primary">저장</button>
+                <button type="button" id="cancel-sched" class="btn btn-secondary">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 1) 상세보기 전용 모달 추가 -->
+<div id="modal-view" class="modal hidden">
+    <div class="modal-content">
+        <h2>일정 상세</h2>
+        <p><strong>제목:</strong> <span id="view-title"></span></p>
+        <p><strong>내용:</strong> <span id="view-content"></span></p>
+        <p><strong>시작:</strong> <span id="view-start"></span></p>
+        <p><strong>종료:</strong> <span id="view-end"></span></p>
+        <div class="actions">
+            <button id="btn-edit" class="btn btn-primary">수정</button>
+            <button type="button" id="delete-sched" class="btn btn-danger">삭제</button>
+            <button id="btn-close-view" class="btn btn-secondary">닫기</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<script src="/js/schedule/schedules.js"></script>
 </body>
 </html>

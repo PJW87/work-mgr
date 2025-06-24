@@ -8,17 +8,24 @@ import com.example.workmgr.model.PageResultDto;
 import com.example.workmgr.model.Post;
 import com.example.workmgr.model.PostDetail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.ArrayList;
 
 // src/main/java/com/example/workmgr/controller/rest/PostRestController.java
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/projects/{pid}/boards/{bid}/posts")
@@ -81,18 +88,126 @@ public class PostRestController {
         post.setId(id);
         post.setBoardId(bid);
         if(postMapper.update(post)==0) return ResponseEntity.notFound().build();
-        // (첨부파일 추가 로직 생략 가능)
+        if(files!=null) for(var f: files){
+            String stored = saveFile(f);
+            Attachment a = new Attachment(post.getId(),
+                    f.getOriginalFilename(),
+                    stored,
+                    f.getContentType(),
+                    f.getSize());
+            attMapper.insert(a);
+        }
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+                        @PathVariable Long id
+    ) {
+        // 1) DB 에서 Post 객체(및 content) 가져오기
+        Post post = postMapper.findById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 2) 본문에 남아 있는 <img> 태그의 URL 추출
+        //    간단하게 정규표현식으로 src 에 들어있는 /uploads/파일명 을 뽑아냅니다.
+        String content = post.getContent();
+        Pattern imgTag = Pattern.compile("<img[^>]+src=\"([^\"]+)\"[^>]*>");
+        Matcher matcher = imgTag.matcher(content);
+
+        List<String> urls = new ArrayList<>();
+        while (matcher.find()) {
+            urls.add(matcher.group(1));  // e.g. "/uploads/abc.jpg"
+        }
+
+        // 3) URL → 실제 파일 경로 → 삭제
+        for (String url : urls) {
+            if (url.startsWith("/uploads/")) {
+                String filename = url.substring("/uploads/".length());
+                try {
+                    Files.deleteIfExists(Paths.get("D:/files", filename));
+                } catch (IOException e) {
+                    // 로그만 남기고 넘어갑니다.
+                    log.warn("Failed to delete inline image file: " + filename, e);
+                }
+            }
+        }
+
+        // 4) 기존에 작성하신 첨부파일(attachments)도 삭제
+        List<Attachment> atts = attMapper.findByPost(id);
+        atts.forEach(a -> {
+            String stored = a.getStoragePath().replaceFirst("^/uploads/", "");
+            try {
+                Files.deleteIfExists(Paths.get("D:/files", stored));
+            } catch (IOException ignored) {}
+        });
+
+        // 5) DB 상에서 post.delete(id) 호출
+        //    (attachments 는 FK cascade 로 함께 삭제됩니다)
         postMapper.delete(id);
+
         return ResponseEntity.noContent().build();
+    }
+    /**
+     * 본문에 드래그&드롭된 이미지 업로드용 API
+     * @param pid 프로젝트 ID (경로 변수)
+     * @param bid 게시판 ID (경로 변수)
+     * @param file 업로드된 이미지 파일 (form-data key: file)
+     * @return 저장된 이미지 URL을 JSON으로 반환
+     */
+    @PostMapping("/images")
+    public ResponseEntity<?> uploadImage(
+            @PathVariable Long pid,
+            @PathVariable Long bid,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        // 게시판 존재 여부 확인
+        if (boardMapper.findById(bid) == null) {
+            return ResponseEntity.badRequest().body("게시판이 존재하지 않습니다.");
+        }
+
+        // 파일 저장
+        String folder = "D:\\files\\";
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Files.copy(file.getInputStream(), Paths.get(folder, filename));
+
+        // 저장된 URL 경로
+        String url = "/uploads/" + filename;
+
+        // JSON 형태로 URL 반환
+        return ResponseEntity.ok().body(new ImageUploadResponse(url));
+    }
+
+    // 이미지 업로드 응답 DTO
+    public static class ImageUploadResponse {
+        private final String url;
+        public ImageUploadResponse(String url) {
+            this.url = url;
+        }
+        public String getUrl() {
+            return url;
+        }
+    }
+    /**
+     * 본문 이미지 삭제용
+     * @param path 파일 저장 경로(예: "/uploads/abc.png")
+     */
+    @DeleteMapping("/images")
+    public ResponseEntity<Void> deleteImage(@RequestParam String path) {
+        // path 는 "/uploads/..." 형태로 넘어온다고 가정
+        String fileName = path.replaceFirst("^/uploads/", "");
+        Path file = Paths.get("D:/files", fileName);
+        try {
+            Files.deleteIfExists(file);
+            return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     private String saveFile(MultipartFile f) throws IOException {
-        String folder = "/var/www/app/uploads/";
+        String folder = "D:\\files\\";
         String name   = UUID.randomUUID()+"_"+f.getOriginalFilename();
         Files.copy(f.getInputStream(), Paths.get(folder,name));
         return "/uploads/"+name;
