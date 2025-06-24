@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewContent = document.getElementById('view-content');
   const viewStart   = document.getElementById('view-start');
   const viewEnd     = document.getElementById('view-end');
-
+  const btnDeleteView = document.getElementById('delete-sched'); // 삭제 버튼
   // FullCalendar 초기화
   const calendar = new FullCalendar.Calendar(
     document.getElementById('calendar'), {
@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
   async function openViewModal(id) {
     const res = await fetch(`/api/schedules/${id}`);
     const s   = await res.json();
-    const btnDeleteView = document.getElementById('delete-sched'); // 삭제 버튼
     viewTitle.textContent   = s.title;
     viewContent.textContent = s.content || '-';
     viewStart.textContent   = s.startDate.replace('T',' ');

@@ -1,30 +1,108 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>업무 관리</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>업무관리</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/tasks.css"/>
 </head>
 <body>
 <nav>
-    <a href="/"       >홈</a>
+    <a href="/">홈</a>
     <a href="/projects">프로젝트관리</a>
     <a href="/schedule">일정관리</a>
     <a href="/tasks" class="active">업무관리</a>
-    <a href="/issues" >이슈관리</a>
+    <a href="/issues">이슈관리</a>
 </nav>
 
-<div id="content">
-    <h1>업무 관리</h1>
-    <div id="task-list-container">
-        <ul id="task-list" class="list-box">
-            <!-- JS에서 DB 데이터 받아와서 <li>로 채웁니다 -->
-        </ul>
+<main id="content">
+    <h1>업무관리</h1>
+    <button id="btn-new-task" class="btn btn-primary">새 업무 등록</button>
+    <table class="task-table">
+        <thead>
+        <tr>
+            <th>우선순위</th>
+            <th>제목</th>
+            <th>담당자</th>
+            <th>마감기한</th>
+            <th>상태</th>
+            <th>액션</th>
+        </tr>
+        </thead>
+        <tbody id="task-list"></tbody>
+    </table>
+</main>
+
+<!-- 업무 등록/수정 모달 -->
+<div id="modal-task-form" class="modal hidden">
+    <div class="modal-content large">
+        <h2 id="form-title">새 업무</h2>
+        <form id="task-form">
+            <input type="hidden" name="id"/>
+            <div class="form-group">
+                <label>제목<input type="text" name="title" required/></label>
+            </div>
+            <div class="form-group">
+                <label>설명<textarea name="description" rows="4"></textarea></label>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>담당자<input type="text" name="assignee"/></label>
+                </div>
+                <div class="form-group">
+                    <label>우선순위
+                        <select name="priority">
+                            <option value="LOW">낮음</option>
+                            <option value="MEDIUM" selected>보통</option>
+                            <option value="HIGH">높음</option>
+                            <option value="CRITICAL">긴급</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>마감기한<input type="datetime-local" name="dueDate"/></label>
+                </div>
+                <div class="form-group">
+                    <label>상태
+                        <select name="status">
+                            <option value="OPEN" selected>열림</option>
+                            <option value="IN_PROGRESS">진행 중</option>
+                            <option value="IN_REVIEW">검토 중</option>
+                            <option value="DONE">완료</option>
+                            <option value="CANCELLED">취소</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="button" id="save-task" class="btn btn-primary">저장</button>
+                <button type="button" id="cancel-task" class="btn btn-secondary">취소</button>
+            </div>
+        </form>
     </div>
-    <button id="btn-add-task" class="btn">업무 등록</button>
 </div>
 
-<script src="/js/tasks.js"></script>
+<!-- 업무 상세보기 모달 -->
+<div id="modal-task-view" class="modal hidden">
+    <div class="modal-content large">
+        <h2>업무 상세</h2>
+        <div class="detail-row"><strong>제목:</strong> <span id="view-title-val"></span></div>
+        <div class="detail-row"><strong>설명:</strong> <div id="view-desc-val"></div></div>
+        <div class="detail-row"><strong>담당자:</strong> <span id="view-assignee"></span></div>
+        <div class="detail-row"><strong>우선순위:</strong> <span id="view-priority"></span></div>
+        <div class="detail-row"><strong>마감기한:</strong> <span id="view-dueDate"></span></div>
+        <div class="detail-row"><strong>상태:</strong> <span id="view-status"></span></div>
+        <div class="detail-row"><strong>생성일:</strong> <span id="view-created"></span></div>
+        <div class="detail-row"><strong>수정일:</strong> <span id="view-updated"></span></div>
+        <div class="actions">
+            <button type="button" id="btn-edit-task" class="btn btn-primary">수정</button>
+            <button type="button" id="btn-delete-task" class="btn btn-danger">삭제</button>
+            <button type="button" id="btn-close-view" class="btn btn-secondary">닫기</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/tasks/tasks.js"></script>
 </body>
 </html>
