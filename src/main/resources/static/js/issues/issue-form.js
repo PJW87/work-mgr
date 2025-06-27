@@ -15,6 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
       content: editor.innerHTML
     };
 
+     const fd = new FormData();
+        fd.append('post', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+
+        // 파일 첨부가 있으면 추가
+        for (let f of form.files.files) {
+          fd.append('files', f);
+        }
+
     const method = data.id ? 'PUT' : 'POST';
     const url    = data.id
       ? `/api/issues/${data.id}`
@@ -34,6 +42,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // 저장 성공하면 리스트로
     window.location.href = '/issues';
   });
+
+  document.querySelectorAll('.btn-attachment-delete').forEach(btn => {
+        btn.addEventListener('click', async e => {
+          const attachId = e.currentTarget.dataset.id;
+          if (!confirm('정말 이 첨부파일을 삭제하시겠습니까?')) return;
+
+          // REST 호출: 파일만 삭제하는 엔드포인트 필요
+          const res = await fetch(`/api/attachments/${attachId}`, {
+            method: 'DELETE'
+          });
+          if (!res.ok) {
+            return alert('첨부파일 삭제에 실패했습니다.');
+          }
+          // 삭제 성공했으면 li 요소를 제거
+              const li = btn.closest('li');
+              if (li) {
+                li.remove();
+              }
+        });
+      });
+
     editor.addEventListener('dragover', e => e.preventDefault());
 
     editor.addEventListener('drop', async e => {
