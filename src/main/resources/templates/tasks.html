@@ -32,6 +32,7 @@
         </thead>
         <tbody id="task-list"></tbody>
     </table>
+    <div id="task-pager" style="margin-top:16px; text-align:center;"></div>
 </main>
 
 <!-- 업무 등록/수정 모달 -->
@@ -40,6 +41,14 @@
         <h2 id="form-title">새 업무</h2>
         <form id="task-form">
             <input type="hidden" name="id"/>
+            <!-- 1) 프로젝트 드롭다운 추가 -->
+            <div class="form-group">
+                <label>프로젝트
+                    <select name="projectId" id="projectId">
+                        <option value="">— 선택 안 함 —</option>
+                    </select>
+                </label>
+            </div>
             <div class="form-group">
                 <label>제목<input type="text" name="title" required/></label>
             </div>

@@ -16,9 +16,13 @@
 </head>
 <body>
 <nav>
-    <a th:href="@{/}">홈</a>
-    <a th:href="@{/projects}">프로젝트관리</a>
-    <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id},bid=${board.id})}">← 게시판 리스트</a>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id},bid=${board.id})}">게시판 리스트</a>
+    <a th:href="@{/projects/{pid}/boards/{bid}/posts(pid=${project.id}, bid=${board.id})}">게시글 리스트</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues">공통이슈관리</a>
 </nav>
 
 <div id="content">
@@ -27,7 +31,10 @@
             <h2 th:text="${detail.post.title}">제목</h2>
             <div class="post-meta">
                 <span>작성자: <strong th:text="${detail.post.author}"/></span>
-                <span>상태: <strong th:text="${detail.post.status}"/></span>
+                <span>
+                상태:
+                    <span class="badge" th:attr="data-status=${detail.post.status}" th:text="${detail.post.status}"id="status"></span>
+                </span>
                 <span>등록일: <strong th:text="${detail.post.createdAt != null
       ? #temporals.format(detail.post.createdAt,'yyyy-MM-dd hh:mm')
       : '-'}">

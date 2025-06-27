@@ -1,29 +1,94 @@
-/* 공통 레이아웃 */
-
+/* ---------------------------------------------
+   Reset & Base
+--------------------------------------------- */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: #f4f6f8;
+  color: #333;
+}
+/* ---------------------------------------------
+   버튼 공통
+--------------------------------------------- */
 .btn {
-  padding: 6px 12px;
+  padding: 8px 16px; font-size: 0.9rem;
   border: none; border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
+  cursor: pointer; transition: background 0.2s;
 }
 .btn-primary { background: #4a90e2; color: #fff; }
-.btn-secondary { background: #ccc; color: #333; }
-.btn-danger { background: #e74c3c; color: #fff; }
+.btn-primary:hover { background: #417cb8; }
+.btn-secondary { background: #bdc3c7; color: #333; }
+.btn-secondary:hover { background: #aeb6bf; }
+.btn-danger    { background: #e74c3c; color: #fff; }
+.btn-danger:hover { background: #c0392b; }
 
+/* ---------------------------------------------
+   테이블 스타일
+--------------------------------------------- */
 .task-table {
   width: 100%; border-collapse: collapse;
   margin-top: 16px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
-.task-table th, .task-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.task-table th,
+.task-table td {
+  padding: 12px 16px;
   text-align: left;
   font-size: 0.9rem;
+  border-bottom: 1px solid #ececec;
 }
-.task-table th { background: #f5f5f5; }
-.task-table tr:nth-child(even) { background: #fafafa; }
+.task-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+.task-table tr:hover {
+  background: #f1f3f5;
+}
 
-/* modal */
+/* ---------------------------------------------
+   우선순위 강조
+--------------------------------------------- */
+.prio-CRITICAL { color: #c0392b; font-weight: 600; }
+.prio-HIGH     { color: #d35400; font-weight: 600; }
+.prio-MEDIUM   { color: #f39c12; font-weight: 600; }
+.prio-LOW      { color: #27ae60; font-weight: 600; }
+
+/* ---------------------------------------------
+   상태 배지 (pill 스타일)
+--------------------------------------------- */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 12px;
+  color: #fff;
+}
+
+/* 각각의 상태별 색상 */
+.status-OPEN {
+  background: #0277bd;    /* 파란 계열 */
+}
+.status-IN_PROGRESS {
+  background: #f57f17;    /* 노란 계열 */
+}
+.status-IN_REVIEW {
+  background: #2e7d32;    /* 초록 계열 */
+}
+.status-DONE {
+  background: #006064;    /* 시안 계열 */
+}
+.status-CANCELLED {
+  background: #c62828;    /* 빨강 계열 */
+}
+/* ---------------------------------------------
+   모달
+--------------------------------------------- */
 .modal {
   position: fixed; top:0; left:0; right:0; bottom:0;
   background: rgba(0,0,0,0.4);
@@ -33,12 +98,15 @@
 .modal.hidden { display: none; }
 .modal-content {
   background: #fff; border-radius: 8px;
-  padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 32px; max-width: 800px;
+  width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
-.modal-content.large { width: 90%; max-width: 800px; }
+.modal-content.large { max-width: 900px; }
 
-/* form styling */
-.form-group { margin-bottom: 12px; }
+/* ---------------------------------------------
+   폼 레이아웃
+--------------------------------------------- */
+.form-group { margin-bottom: 16px; }
 .form-row {
   display: flex; flex-wrap: wrap; gap: 16px;
 }
@@ -46,25 +114,97 @@
   flex: 1 1 200px;
 }
 .form-group label {
-  display: block; font-size: 0.9rem; margin-bottom: 4px;
+  display: block; font-size: 0.9rem; margin-bottom: 6px;
 }
-.form-group input[type="text"],
-.form-group textarea,
+.form-group input,
 .form-group select,
-.form-group input[type="datetime-local"] {
+.form-group textarea {
   width: 100%;
-  padding: 6px 8px;
+  padding: 8px 12px;
   border: 1px solid #ccc; border-radius: 4px;
   font-size: 0.9rem;
+  transition: border-color 0.2s;
 }
-.actions {
-  text-align: right; margin-top: 16px;
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none; border-color: #4a90e2;
 }
-.actions .btn { margin-left: 8px; }
+textarea { min-height: 100px; resize: vertical; }
 
-/* detail rows */
+/* ---------------------------------------------
+   모달 버튼 그룹
+--------------------------------------------- */
+.actions {
+  text-align: right; margin-top: 24px;
+}
+.actions .btn { margin-left: 12px; }
+
+/* ---------------------------------------------
+   상세 보기 행
+--------------------------------------------- */
 .detail-row {
   margin-bottom: 12px;
   font-size: 0.9rem;
 }
-.detail-row strong { width: 100px; display: inline-block; }
+.detail-row strong {
+  display: inline-block;
+  width: 100px;
+  color: #555;
+}
+
+/* ---------------------------------------------
+   페이저
+--------------------------------------------- */
+#task-pager {
+  margin-top: 16px;
+}
+#task-pager .pg-btn {
+  margin: 0 4px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#task-pager .pg-btn:hover {
+  background: #f0f0f0;
+}
+#task-pager .pg-btn[disabled] {
+  background: #4a90e2; color: #fff; border-color: #4a90e2;
+  cursor: default;
+}
+
+/* ---------------------------------------------
+   반응형
+--------------------------------------------- */
+@media (max-width: 768px) {
+  .form-row { flex-direction: column; }
+  nav { justify-content: center; }
+}
+.task-table td:nth-child(3) {
+  max-width: 150px;        /* 필요에 따라 조절 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 툴팁을 위한 cursor 표시 */
+.task-table td:nth-child(3)[title] {
+  cursor: help;
+}
+/* 제목 칸이 길어질 때 말줄임표(...) 처리 */
+.task-table td:nth-child(2) {
+  max-width: 500px;       /* 필요에 따라 너비 조정 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#view-desc-val {
+  white-space: pre-wrap;   /* 줄바꿈(\n)을 그대로 살려줍니다 */
+  word-break: break-word;   /* 너무 긴 단어도 영역을 넘지 않게끔 */
+}
+/* 셀에 마우스 올리면 전체 제목 툴팁으로 표시 */
+.task-table td:nth-child(2)[title] {
+  cursor: help;
+}

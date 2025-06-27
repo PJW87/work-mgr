@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>이슈 관리</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>이슈관리</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/issues.css"/>
 </head>
 <body>
 <nav>
@@ -12,24 +13,44 @@
     <a href="/projects">프로젝트관리</a>
     <a href="/schedule">일정관리</a>
     <a href="/tasks">업무관리</a>
-    <a href="/issues" class="active">이슈관리</a>
+    <a href="/issues" class="active">공통이슈관리</a>
 </nav>
 
-<div id="content">
-    <h1>이슈 기록</h1>
+<main id="content">
+    <h1>공통이슈관리</h1>
 
-    <div id="issue-actions" style="margin-bottom:20px;">
-        <input id="issue-search" type="text" placeholder="검색어 입력" />
-        <button id="btn-search-issue" class="btn">검색</button>
-        <button id="btn-add-issue" class="btn">이슈 등록</button>
+    <!-- 검색 -->
+    <div class="search-bar">
+        <select id="search-type">
+            <option value="T" th:selected="${type=='T'}">제목</option>
+            <option value="C" th:selected="${type=='C'}">내용</option>
+            <option value="TC" th:selected="${type=='TC'}">제목+내용</option>
+        </select>
+        <input type="text" id="search-keyword" th:value="${keyword}" placeholder="검색어"/>
+        <input type="date" id="search-from" th:value="${from}"/>
+        <input type="date" id="search-to"   th:value="${to}"/>
+        <button id="btn-search">검색</button>
+        <button id="btn-new-issue">새 이슈 등록</button>
     </div>
 
-    <div id="issue-list-container">
-        <ul id="issue-list" class="list-box">
-            <!-- JS에서 DB 데이터 받아와서 <li>로 채웁니다 -->
-        </ul>
-    </div>
-</div>
+    <!-- 리스트 -->
+    <table class="issue-table">
+        <thead>
+        <tr>
+            <th><input type="checkbox" id="chk-all"/></th>
+            <th>No</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>상태</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody id="issue-list"></tbody>
+    </table>
+    <button id="btn-batch-delete" class="btn btn-secondary">선택 삭제</button>
+    <!-- 페이징 -->
+    <div id="pagination"></div>
+</main>
 
 <script src="/js/issues.js"></script>
 </body>

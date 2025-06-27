@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 등록/수정 모달 열기 ---
   function openEditModal(data = {}) {
     form.reset();
+    form.id.value = '';
     Object.entries(data).forEach(([k,v])=>{
       if (form[k]) form[k].value = v || '';
     });

@@ -30,40 +30,40 @@ body, html {
 #content > p .btn:hover {
   background: #1e8449;
 }
-#btn-new-post {
+#btn-new-issue {
   margin-bottom: 16px;
   background: #3498db;
 }
-#btn-new-post:hover {
+#btn-new-issue:hover {
   background: #2980b9;
 }
 
 /* ——— 게시글 테이블 ——— */
-.post-table {
+.issue-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-.post-table thead {
+.issue-table thead {
   background: #f0f0f0;
 }
-.post-table th,
-.post-table td {
+.issue-table th,
+.issue-table td {
   padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
-.post-table th {
+.issue-table th {
   font-weight: 600;
   color: #555;
 }
-.post-table tr:last-child td {
+.issue-table tr:last-child td {
   border-bottom: none;
 }
 
 /* 액션 버튼 칸 flex 정렬 */
-.post-table td.actions {
+.issue-table td.actions {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
@@ -151,8 +151,8 @@ body, html {
   font-size:0.95em;
 }
 /* content */
-.post-content { padding:16px; background:#fff; border-radius:6px; margin:20px 0; }
-.post-content img { max-width:100%; }
+.issue-content { padding:16px; background:#fff; border-radius:6px; margin:20px 0; }
+.issue-content img { max-width:100%; }
 
 
 /* meta */
@@ -174,7 +174,7 @@ ul li { margin-bottom:6px; }
 /* posts.css 에 추가하세요 */
 
 /* 상태 cell 자체에는 배경을 지우고 */
-.post-table .cell-status {
+.issue-table .cell-status {
   background: none;
   justify-content: center;  /* 수평 중앙 정렬 */
   align-items: center;      /* 수직 중앙 정렬 */
@@ -182,7 +182,7 @@ ul li { margin-bottom:6px; }
 }
 
 /* 뱃지 역할을 할 span */
-.post-meta .cell-status .badge {
+.issue-table .cell-status .badge {
   display: inline-block;
   padding: 2px 6px;           /* 살짝만 여백 */
   font-size: 0.85em;          /* 텍스트 크기 작게 */
@@ -191,19 +191,19 @@ ul li { margin-bottom:6px; }
 }
 
 /* 상태별 컬러 정의 */
-.post-meta .cell-status[data-status="OPEN"] .badge {
+.issue-table .cell-status[data-status="OPEN"] .badge {
   background-color: #e2f0d9;
   color: #2e7d32;
 }
-.post-meta .cell-status[data-status="IN_PROGRESS"] .badge {
+.issue-table .cell-status[data-status="IN_PROGRESS"] .badge {
   background-color: #fff4e5;
   color: #ef6c00;
 }
-.post-meta .cell-status[data-status="RESOLVED"] .badge {
+.issue-table .cell-status[data-status="RESOLVED"] .badge {
   background-color: #e1f5fe;
   color: #0288d1;
 }
-.post-meta .cell-status[data-status="CLOSED"] .badge {
+.issue-table .cell-status[data-status="CLOSED"] .badge {
   background-color: #fbe9e7;
   color: #d32f2f;
 }

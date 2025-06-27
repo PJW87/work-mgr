@@ -25,9 +25,9 @@ public class ViewController {
     public String tasks() {
         return "tasks";
     }
-
-    @GetMapping("/issues")
-    public String issues() {
-        return "issues";
-    }
+//
+//    @GetMapping("/issues")
+//    public String issues() {
+//        return "issues";
+//    }
 }

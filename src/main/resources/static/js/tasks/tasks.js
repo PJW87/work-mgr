@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // form elements
   const form         = document.getElementById('task-form');
+  const projSel      = form.projectId;
   const titleInp     = form.title;
   const descInp      = form.description;
   const asgInp       = form.assignee;
@@ -25,9 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewCreated  = document.getElementById('view-created');
   const viewUpdated  = document.getElementById('view-updated');
   document.getElementById('btn-close-view').onclick = () => viewModal.classList.add('hidden');
-  document.getElementById('btn-edit-task').onclick  = () => openEdit(currentViewId);
+  document.getElementById('btn-edit-task').onclick  = () => { viewModal.classList.add('hidden');  // ← 상세보기 모달 숨김
+                                                              openEdit(currentViewId);};
   document.getElementById('btn-delete-task').onclick= deleteTask;
-
+  fetch('/api/projects')
+      .then(r => r.json())
+      .then(list => {
+        list.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = p.name;
+          projSel.appendChild(opt);
+        });
+      });
+  // 페이지·사이즈 전역 변수
+  let page = 0, size = 20;
   let currentViewId = null;
 
   btnNew.onclick = () => openNew();
@@ -53,41 +66,62 @@ document.addEventListener('DOMContentLoaded', () => {
     })[s] || '-';
   }
 
+
+
   async function loadTasks() {
-    const res = await fetch('/api/tasks');
-    const arr = await res.json();
+    // 1) API 호출
+    const res = await fetch(`/api/tasks?page=${page}&size=${size}`);
+    const { data: arr, total, page: curPage, size: curSize } = await res.json();
 
-    // 1) 우선순위 순, 2) dueDate 순 정렬
-    arr.sort((a, b) => {
-      const order = ['CRITICAL','HIGH','MEDIUM','LOW'];
-      const pa = order.indexOf(a.priority), pb = order.indexOf(b.priority);
-      if (pa !== pb) return pa - pb;
-      if (a.dueDate && b.dueDate)  return new Date(a.dueDate) - new Date(b.dueDate);
-      if (a.dueDate) return -1;
-      if (b.dueDate) return 1;
-      return 0;
-    });
+    // 2) 정렬 (우선순위 → dueDate)
+//    arr.sort((a, b) => {
+//      const order = ['CRITICAL','HIGH','MEDIUM','LOW'];
+//      const pa = order.indexOf(a.priority), pb = order.indexOf(b.priority);
+//      if (pa !== pb) return pa - pb;
+//      if (a.dueDate && b.dueDate)  return new Date(a.dueDate) - new Date(b.dueDate);
+//      if (a.dueDate) return -1;
+//      if (b.dueDate) return 1;
+//      return 0;
+//    });
 
+    // 3) 테이블 렌더링
     listEl.innerHTML = arr.map(t => `
       <tr data-id="${t.id}">
-        <td>${mapPriority(t.priority)}</td>
-        <td class="link">${t.title}</td>
-        <td>${t.assignee||'-'}</td>
+        <td class="prio-${t.priority}">${mapPriority(t.priority)}</td>
+        <td class="link" title="${t.title}">${ t.projectName ? `<em>[${t.projectName}]</em> ` : '' } ${t.title}</td>
+            <td title="${t.assignee || '-'}">
+              ${t.assignee || '-'}
+            </td>
+
         <td>${t.dueDate
-              ? new Date(t.dueDate)
-                  .toISOString()
-                  .slice(0,16)
-                  .replace('T',' ')
+              ? t.dueDate.slice(0,16).replace('T',' ')
               : '-'}</td>
-        <td>${mapStatus(t.status)}</td>
+         <td>
+         <span class="status-badge status-${t.status}">${mapStatus(t.status)}</span>
+         </td>
         <td>
           <button class="btn btn-secondary btn-sm edit">수정</button>
           <button class="btn btn-danger btn-sm del">삭제</button>
         </td>
       </tr>
     `).join('');
-
     attachRowHandlers();
+
+    // 4) 페이징 버튼 렌더링
+    const totalPages = Math.ceil(total / curSize);
+    let pagerHtml = '';
+    for (let i = 0; i < totalPages; i++) {
+      pagerHtml += `<button class="pg-btn"${i===curPage?' disabled':''} data-page="${i}">${i+1}</button>`;
+    }
+    document.getElementById('task-pager').innerHTML = pagerHtml;
+
+    // 5) 페이징 버튼 이벤트 바인딩
+    document.querySelectorAll('#task-pager .pg-btn').forEach(btn => {
+      btn.onclick = () => {
+        page = +btn.dataset.page;
+        loadTasks();
+      };
+    });
   }
 
   function attachRowHandlers() {
@@ -107,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     document.getElementById('form-title').textContent = '새 업무';
     form.id.value = '';
+    projSel.value = '';
     formModal.classList.remove('hidden');
   }
 
@@ -115,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const t   = await res.json();
 
     form.id.value      = t.id;
+    projSel.value      = t.projectId || '';
     titleInp.value     = t.title;
     descInp.value      = t.description || '';
     asgInp.value       = t.assignee   || '';
@@ -123,8 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // dueDate → datetime-local 포맷 ("YYYY-MM-DDThh:mm")
     if (t.dueDate) {
-      const dt = new Date(t.dueDate);
-      form.dueDate.value = dt.toISOString().slice(0,16);
+        form.dueDate.value = t.dueDate.slice(0,16).replace('T',' ')
     } else {
       form.dueDate.value = '';
     }
@@ -138,7 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const res = await fetch(`/api/tasks/${id}`);
     const t   = await res.json();
 
-    viewTitle.textContent    = t.title;
+    // 프로젝트명이 있으면 "[프로젝트명] - 제목" 으로
+    viewTitle.textContent = t.projectName ? `${t.projectName} – ${t.title}` : t.title;
     viewDesc.textContent     = t.description || '-';
     viewAsg.textContent      = t.assignee   || '-';
     viewPrio.textContent     = mapPriority(t.priority);
@@ -156,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function saveTask() {
     const data = {
       id:          form.id.value || null,
+      projectId:   form.projectId.value || null,
       title:       titleInp.value,
       description: descInp.value,
       assignee:    asgInp.value,

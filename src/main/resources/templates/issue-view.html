@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title th:text="${detail.issue.title}">공통이슈 상세</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/posts-view.css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+         var ISSUE_ID    = /*[[${detail.issue.id}]]*/ null;
+        /*]]>*/
+    </script>
+</head>
+<body>
+<nav>
+    <a href="/">홈</a>
+    <a href="/projects">프로젝트관리</a>
+    <a href="/schedule">일정관리</a>
+    <a href="/tasks">업무관리</a>
+    <a href="/issues" class="active">공통이슈관리</a>
+</nav>
+
+<div id="content">
+    <div class="post-card">
+        <div class="post-header">
+            <h2 th:text="${detail.issue.title}">제목</h2>
+            <div class="post-meta">
+                <span>작성자: <strong th:text="${detail.issue.author}"/></span>
+                <span>
+                상태:
+                    <span class="badge" th:attr="data-status=${detail.issue.status}" th:text="${detail.issue.status}"id="status"></span>
+                </span>
+                <span>등록일: <strong th:text="${detail.issue.createdAt != null
+      ? #temporals.format(detail.issue.createdAt,'yyyy-MM-dd hh:mm')
+      : '-'}">
+  </strong>
+</span>
+            </div>
+        </div>
+
+        <div class="post-body" th:utext="${detail.issue.content}">
+            본문 내용
+        </div>
+
+<!--        <div class="post-attachments" th:if="${detail.attachments.size() > 0}">-->
+<!--            <h3>첨부파일</h3>-->
+<!--            <ul>-->
+<!--                <li th:each="f : ${detail.attachments}">-->
+<!--                    <a-->
+<!--                            th:href="@{/api/attachments/{id}/download(id=${f.id})}"-->
+<!--                            th:text="${f.filename}"-->
+<!--                            th:attr="download=${f.filename}"-->
+<!--                    >-->
+<!--                    파일명-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+
+        <div class="post-actions">
+            <button id="btn-edit" class="btn btn-primary">수정</button>
+            <button id="btn-delete" class="btn btn-secondary">삭제</button>
+            <button id="btn-list" class="btn">목록으로</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/issues/issue-view.js"></script>
+</body>
+</html>

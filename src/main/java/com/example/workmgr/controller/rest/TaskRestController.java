@@ -1,5 +1,7 @@
 package com.example.workmgr.controller.rest;
+import com.example.workmgr.mapper.ProjectsMapper;
 import com.example.workmgr.mapper.TaskMapper;
+import com.example.workmgr.model.PageResultDto;
 import com.example.workmgr.model.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +14,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskRestController {
     private final TaskMapper taskMapper;
+    private final ProjectsMapper projectsMapper;
 
     @GetMapping
-    public List<Task> list() {
-        return taskMapper.findAll();
+    public PageResultDto.PageResult<Task> list(
+            @RequestParam(defaultValue="0") int page,
+            @RequestParam(defaultValue="20") int size
+    ) {
+        int total  = taskMapper.countAll();
+        int offset = page * size;
+        List<Task> data = taskMapper.findPage(offset, size);
+        return new PageResultDto.PageResult<>(data, total, page, size);
     }
 
     @GetMapping("/{id}")

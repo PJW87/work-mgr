@@ -44,4 +44,6 @@ public class Task {
 
     /** 최종 수정 시각 (DB 자동 채움) */
     private LocalDateTime updatedAt;
+
+    private String projectName;
 }

@@ -246,3 +246,7 @@
   color: inherit;
   white-space: nowrap;
 }
+#view-content {
+  white-space: pre-wrap;   /* 줄바꿈(\n)을 그대로 살려줍니다 */
+  word-break: break-word;   /* 너무 긴 단어도 영역을 넘지 않게끔 */
+}
