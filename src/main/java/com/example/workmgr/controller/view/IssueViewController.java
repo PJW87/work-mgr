@@ -1,6 +1,7 @@
 package com.example.workmgr.controller.view;
 
 import com.example.workmgr.controller.rest.IssueRestController;
+import com.example.workmgr.mapper.AttachmentMapper;
 import com.example.workmgr.mapper.IssueMapper;
 import com.example.workmgr.model.Issue;
 import com.example.workmgr.model.PageResultDto;
@@ -16,7 +17,7 @@ public class IssueViewController {
 
     private final IssueMapper            issueMapper;
     private final IssueRestController    issueRestController;
-
+    private final AttachmentMapper attMapper;
     /** 목록 페이지 */
     @GetMapping
     public String list(
@@ -55,6 +56,7 @@ public class IssueViewController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model m) {
         m.addAttribute("issue", issueMapper.findById(id));
+        m.addAttribute("attachments", attMapper.findByIssue(id));
         return "issue-form";
     }
     // 상세보기

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pid    = PROJECT_ID;
   const bid    = BOARD_ID;
   const postId = POST_ID;
-
+  let deletedIds = [];
   editor.addEventListener('dragover', e => e.preventDefault());
 
   editor.addEventListener('drop', async e => {
@@ -61,7 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fd = new FormData();
     fd.append('post', new Blob([JSON.stringify(p)], { type: 'application/json' }));
-
+    // 3) 삭제 대기 리스트
+    if (deletedIds.length) {
+      fd.append('deleted', new Blob([JSON.stringify(deletedIds)], { type: 'application/json' }));
+    }
     // 파일 첨부가 있으면 추가
     for (let f of form.files.files) {
       fd.append('files', f);
@@ -83,21 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('.btn-attachment-delete').forEach(btn => {
       btn.addEventListener('click', async e => {
+        const id = +e.currentTarget.dataset.id;
         const attachId = e.currentTarget.dataset.id;
         if (!confirm('정말 이 첨부파일을 삭제하시겠습니까?')) return;
-
-        // REST 호출: 파일만 삭제하는 엔드포인트 필요
-        const res = await fetch(`/api/attachments/${attachId}`, {
-          method: 'DELETE'
-        });
-        if (!res.ok) {
-          return alert('첨부파일 삭제에 실패했습니다.');
-        }
-        // 삭제 성공했으면 li 요소를 제거
-            const li = btn.closest('li');
-            if (li) {
-              li.remove();
-            }
+        deletedIds.push(id);
+        btn.closest('li').remove();
       });
     });
 

@@ -43,7 +43,7 @@ public interface IssueMapper {
            (#{type} = 'TC' AND (title LIKE CONCAT('%',#{keyword},'%')
                              OR content LIKE CONCAT('%',#{keyword},'%'))))
        AND (#{from} IS NULL OR created_at >= #{from})
-       AND (#{to}   IS NULL OR created_at <= #{to})
+       AND (#{to}   IS NULL OR created_at <  DATE_ADD(#{to}, INTERVAL 1 DAY))
      ORDER BY created_at DESC
      LIMIT #{limit} OFFSET #{offset}
     """)

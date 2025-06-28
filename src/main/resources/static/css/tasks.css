@@ -208,3 +208,80 @@ textarea { min-height: 100px; resize: vertical; }
 .task-table td:nth-child(2)[title] {
   cursor: help;
 }
+/* ─── 검색바 스타일 ─── */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.search-bar select,
+.search-bar input[type="text"],
+.search-bar input[type="date"] {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar select:focus,
+.search-bar input[type="text"]:focus,
+.search-bar input[type="date"]:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 4px rgba(52,152,219,0.3);
+}
+
+.search-bar button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#btn-search {
+  background: #27ae60;
+  color: #fff;
+}
+
+#btn-search:hover {
+  background: #219653;
+}
+
+.search-bar select,
+.search-bar input[type="text"],
+.search-bar input[type="date"],
+.search-bar button {
+  height: 38px;                 /* 같은 높이 */
+  box-sizing: border-box;       /* padding/border 포함해서 계산 */
+}
+
+.search-bar button {
+  padding: 0 14px;              /* 높이에 맞춘 패딩 */
+  line-height: 38px;            /* 버튼 텍스트 수직 중앙 정렬 */
+}
+/* 검색바 안 버튼 전용 오버라이드 */
+.search-bar .btn {
+  margin-top: auto !important;
+  padding: 0 14px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  box-sizing: border-box !important;
+}
+
+/* 만약 일반 button 태그도 섞여있으면 */
+.search-bar button {
+  padding: 0 14px;
+  height: 38px;
+  line-height: 38px;
+  box-sizing: border-box;
+}

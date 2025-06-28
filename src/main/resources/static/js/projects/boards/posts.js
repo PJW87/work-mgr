@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const editor  = document.getElementById('editor');
   const tblBody = document.getElementById('post-list');
   const pagDiv  = document.getElementById('pagination');
+  const sType = document.getElementById('search-type');
+  const sKey  = document.getElementById('search-keyword');
+  const sFrom = document.getElementById('search-from');
+  const sTo   = document.getElementById('search-to');
+  const btnSearch = document.getElementById('btn-search');
 
   form.onsubmit = submitPost;
   editor.addEventListener('drop', handleDrop);
@@ -20,11 +25,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
      };
   // --- 함수들 ---
   async function loadPosts(){
-    const res = await fetch(`/api/projects/${pid}/boards/${bid}/posts?page=${page}&size=${size}`);
+
+   // URLSearchParams 직접 생성
+      const params = new URLSearchParams();
+      params.set('type',    sType.value);
+      params.set('keyword', sKey.value.trim());
+      // 기간 필터: 둘 다 값 있을 때만
+      if (sFrom.value && sTo.value) {
+        params.set('from', sFrom.value);
+        params.set('to',   sTo.value);
+      }
+      params.set('page', page);
+      params.set('size', size);
+    const res = await fetch(`/api/projects/${pid}/boards/${bid}/posts?${params}`);
     const jr  = await res.json();
     renderTable(jr.data);
     renderPagination(jr.total, jr.page, jr.size);
   }
+
+btnSearch.onclick = () => {
+  // 1) 기간이 하나만 입력되었을 때
+    if ((sFrom.value && !sTo.value) || (!sFrom.value && sTo.value)) {
+      return alert('기간을 시작일과 종료일 모두 입력해주세요.');
+    }
+    // 2) 기간이 둘 다 입력됐지만 to < from 일 때
+    if (sFrom.value && sTo.value && sTo.value < sFrom.value) {
+      return alert('종료일은 시작일보다 이후여야 합니다.');
+    }
+    page = 0;
+    loadPosts();
+  };
 
 function renderTable(data) {
   tblBody.innerHTML = data.map((p, idx) => `
@@ -37,7 +67,7 @@ function renderTable(data) {
         </a>
       </td>
       <td>${p.author}</td>
-       <td class="cell-status" data-status="${p.status}">
+       <td class="cell-status data-status-${p.status}">
                <span class="badge">${translateStatus(p.status)}</span>
              </td>
       <td>${p.createdAt.slice(0,10)}</td>

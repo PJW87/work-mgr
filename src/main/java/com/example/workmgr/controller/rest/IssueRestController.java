@@ -1,5 +1,6 @@
 package com.example.workmgr.controller.rest;
 
+import com.example.workmgr.mapper.AttachmentMapper;
 import com.example.workmgr.mapper.IssueMapper;
 import com.example.workmgr.model.*;
 import lombok.RequiredArgsConstructor;
@@ -26,19 +27,26 @@ import java.util.regex.Pattern;
 public class IssueRestController {
 
     private final IssueMapper mapper;
+    private final AttachmentMapper attMapper;
 
-    /** 페이징 + 검색 */
+    /**
+     * 페이징 + 검색
+     * URL 예시: GET /api/issues?type=T&keyword=foo&from=2025-06-01&to=2025-06-30&page=0&size=20
+     */
     @GetMapping
     public PageResultDto.PageResult<Issue> list(
-            @RequestParam(defaultValue="") String type,
-            @RequestParam(defaultValue="") String keyword,
-            @RequestParam(required=false) LocalDate from,
-            @RequestParam(required=false) LocalDate to,
-            @RequestParam(defaultValue="0")  int page,
-            @RequestParam(defaultValue="20") int size
+            @RequestParam(defaultValue = "") String type,
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
     ) {
-        int total  = mapper.countAll(type, keyword, from, to);
-        var data   = mapper.findPage(type, keyword, from, to, page*size, size);
+        int total = mapper.countAll(type, keyword, from, to);
+        List<Issue> data = mapper.findPage(
+                type, keyword, from, to,
+                page * size, size
+        );
         return new PageResultDto.PageResult<>(data, total, page, size);
     }
 
@@ -49,26 +57,63 @@ public class IssueRestController {
         if (i == null) {
             return ResponseEntity.notFound().build();
         }
-//        List<Attachment> files = attMapper.findByPost(id);
+        List<Attachment> files = attMapper.findByIssue(id);
 //        return ResponseEntity.ok(new PostDetail(p, files));
-        return ResponseEntity.ok(new IssueDetail(i));
+        return ResponseEntity.ok(new IssueDetail(i,files));
     }
 
     /** 생성 */
     @PostMapping
-    public ResponseEntity<Issue> create(@RequestBody Issue i) {
-        mapper.insert(i);
-        return ResponseEntity.ok(i);
+    public ResponseEntity<Issue> create(@RequestPart("issue") Issue issue,  @RequestPart(value="files", required=false) List<MultipartFile> files
+    )throws IOException {
+        mapper.insert(issue);
+        if(files!=null) for(var f: files){
+            String stored = saveFile(f);
+            Attachment a = Attachment.forIssue(issue.getId(),
+                    f.getOriginalFilename(),
+                    stored,
+                    f.getContentType(),
+                    f.getSize());
+            attMapper.insertIssue(a);
+        }
+        return ResponseEntity.ok(issue);
     }
 
     /** 수정 */
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
             @PathVariable Long id,
-            @RequestBody Issue i
-    ) {
-        i.setId(id);
-        mapper.update(i);
+            @RequestPart("issue") Issue issue,
+            @RequestPart(value="files", required=false) List<MultipartFile> files,
+            @RequestPart(value="deleted", required=false) List<Long> deletedIds
+    ) throws IOException {
+
+        // 1) 삭제 대기된 첨부 파일들 먼저 처리
+        if (deletedIds != null) {
+            for (Long aid : deletedIds) {
+                // DB에서 경로 조회
+                Attachment att = attMapper.findById(aid);
+                if (att != null) {
+                    // 실제 파일 삭제
+                    Path file = Paths.get("D:/files", att.getStoragePath().substring("/uploads/".length()));
+                    Files.deleteIfExists(file);
+                }
+                // DB 레코드 삭제
+                attMapper.delete(aid);
+            }
+        }
+
+        issue.setId(id);
+        mapper.update(issue);
+        if(files!=null) for(var f: files){
+            String stored = saveFile(f);
+            Attachment a = Attachment.forIssue(issue.getId(),
+                    f.getOriginalFilename(),
+                    stored,
+                    f.getContentType(),
+                    f.getSize());
+            attMapper.insertIssue(a);
+        }
         return ResponseEntity.noContent().build();
     }
 
@@ -103,14 +148,14 @@ public class IssueRestController {
             }
         }
 
-//        // 4) 기존에 작성하신 첨부파일(attachments)도 삭제
-//        List<Attachment> atts = attMapper.findByIssue(id);
-//        atts.forEach(a -> {
-//            String stored = a.getStoragePath().replaceFirst("^/uploads/", "");
-//            try {
-//                Files.deleteIfExists(Paths.get("D:/files", stored));
-//            } catch (IOException ignored) {}
-//        });
+        // 4) 기존에 작성하신 첨부파일(attachments)도 삭제
+        List<Attachment> atts = attMapper.findByIssue(id);
+        atts.forEach(a -> {
+            String stored = a.getStoragePath().replaceFirst("^/uploads/", "");
+            try {
+                Files.deleteIfExists(Paths.get("D:/files", stored));
+            } catch (IOException ignored) {}
+        });
         mapper.delete(id);        return ResponseEntity.noContent().build();
     }
 

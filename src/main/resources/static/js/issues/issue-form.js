@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCancel = document.getElementById('btn-cancel');
   // 서버에 보낼 때 이 필드를 기준으로 POST/PUT 분기
   const issueId = ISSUE_ID;
+ // 1) 삭제 예정 attachment id 보관소
+ let deletedIds = [];
 
   btnSave.addEventListener('click', async () => {
     // 입력값 모으기
@@ -16,12 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
      const fd = new FormData();
-        fd.append('post', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-
-        // 파일 첨부가 있으면 추가
-        for (let f of form.files.files) {
-          fd.append('files', f);
-        }
+        fd.append('issue', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+      // 3) 삭제 대기 리스트
+      if (deletedIds.length) {
+        fd.append('deleted', new Blob([JSON.stringify(deletedIds)], { type: 'application/json' }));
+      }
+      // 파일 첨부가 있으면 추가
+      for (let f of form.files.files) {
+        fd.append('files', f);
+      }
 
     const method = data.id ? 'PUT' : 'POST';
     const url    = data.id
@@ -30,8 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(data)
+      body: fd
     });
 
     if (!res.ok) {
@@ -45,21 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.btn-attachment-delete').forEach(btn => {
         btn.addEventListener('click', async e => {
-          const attachId = e.currentTarget.dataset.id;
-          if (!confirm('정말 이 첨부파일을 삭제하시겠습니까?')) return;
-
-          // REST 호출: 파일만 삭제하는 엔드포인트 필요
-          const res = await fetch(`/api/attachments/${attachId}`, {
-            method: 'DELETE'
-          });
-          if (!res.ok) {
-            return alert('첨부파일 삭제에 실패했습니다.');
-          }
-          // 삭제 성공했으면 li 요소를 제거
-              const li = btn.closest('li');
-              if (li) {
-                li.remove();
-              }
+        const id = +btn.dataset.id;
+        if (!confirm('정말 이 첨부파일을 삭제하시겠습니까?')) return;
+        deletedIds.push(id);
+        btn.closest('li').remove();
+        const attachId = e.currentTarget.dataset.id;
         });
       });
 

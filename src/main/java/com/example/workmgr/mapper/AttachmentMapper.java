@@ -34,6 +34,19 @@ public interface AttachmentMapper {
       WHERE post_id = #{postId}
     """)
     List<Attachment> findByPost(Long postId);
+    @Select("""
+      SELECT
+        id,
+        issue_id      AS issueId,
+        filename,
+        storage_path AS storagePath,
+        content_type AS contentType,
+        file_size    AS fileSize,
+        uploaded_at  AS uploadedAt
+      FROM attachments
+      WHERE issue_id = #{IssueId}
+    """)
+    List<Attachment> findByIssue(Long issueId);
 
     @Insert("""
       INSERT INTO attachments(post_id, filename, storage_path, content_type, file_size)
@@ -41,6 +54,13 @@ public interface AttachmentMapper {
     """)
     @Options(useGeneratedKeys=true, keyProperty="id")
     void insert(Attachment a);
+
+    @Insert("""
+      INSERT INTO attachments(issue_id, filename, storage_path, content_type, file_size)
+      VALUES(#{issueId}, #{filename}, #{storagePath}, #{contentType}, #{fileSize})
+    """)
+    @Options(useGeneratedKeys=true, keyProperty="id")
+    void insertIssue(Attachment a);
     /**
      * 단일 첨부파일 삭제
      * @param id attachments.id

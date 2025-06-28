@@ -4,9 +4,11 @@ import com.example.workmgr.mapper.TaskMapper;
 import com.example.workmgr.model.PageResultDto;
 import com.example.workmgr.model.Task;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -16,17 +18,26 @@ public class TaskRestController {
     private final TaskMapper taskMapper;
     private final ProjectsMapper projectsMapper;
 
-    @GetMapping
-    public PageResultDto.PageResult<Task> list(
-            @RequestParam(defaultValue="0") int page,
-            @RequestParam(defaultValue="20") int size
-    ) {
-        int total  = taskMapper.countAll();
-        int offset = page * size;
-        List<Task> data = taskMapper.findPage(offset, size);
-        return new PageResultDto.PageResult<>(data, total, page, size);
-    }
-
+@GetMapping
+public PageResultDto.PageResult<Task> list(
+        @RequestParam(defaultValue="T")     String type,
+        @RequestParam(defaultValue="")      String keyword,
+        @RequestParam(required=false)       Long projectId,
+        @RequestParam(required=false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
+        LocalDate from,
+        @RequestParam(required=false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE)
+        LocalDate to,
+        @RequestParam(defaultValue="0")     int page,
+        @RequestParam(defaultValue="20")    int size
+) {
+    int total  = taskMapper.countAll(type, keyword, projectId, from, to);
+    int offset = page * size;
+    List<Task> data = taskMapper.findPage(
+            type, keyword, projectId, from, to,
+            offset, size
+    );
+    return new PageResultDto.PageResult<>(data, total, page, size);
+}
     @GetMapping("/{id}")
     public ResponseEntity<Task> get(@PathVariable Long id) {
         Task t = taskMapper.findById(id);

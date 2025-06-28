@@ -43,20 +43,20 @@
             본문 내용
         </div>
 
-<!--        <div class="post-attachments" th:if="${detail.attachments.size() > 0}">-->
-<!--            <h3>첨부파일</h3>-->
-<!--            <ul>-->
-<!--                <li th:each="f : ${detail.attachments}">-->
-<!--                    <a-->
-<!--                            th:href="@{/api/attachments/{id}/download(id=${f.id})}"-->
-<!--                            th:text="${f.filename}"-->
-<!--                            th:attr="download=${f.filename}"-->
-<!--                    >-->
-<!--                    파일명-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
+        <div class="post-attachments" th:if="${detail.attachments.size() > 0}">
+            <h3>첨부파일</h3>
+            <ul>
+                <li th:each="f : ${detail.attachments}">
+                    <a
+                            th:href="@{/api/attachments/{id}/download(id=${f.id})}"
+                            th:text="${f.filename}"
+                            th:attr="download=${f.filename}"
+                    >
+                    파일명
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         <div class="post-actions">
             <button id="btn-edit" class="btn btn-primary">수정</button>

@@ -9,6 +9,7 @@ import com.example.workmgr.model.Post;
 import com.example.workmgr.model.PostDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -37,11 +39,19 @@ public class PostRestController {
     @GetMapping
     public PageResultDto.PageResult<Post> list(
             @PathVariable Long bid,
-            @RequestParam(defaultValue="0") int page,
-            @RequestParam(defaultValue="10") int size
+            @RequestParam(defaultValue = "") String type,
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
     ) {
-        int total = postMapper.countByBoard(bid);
-        List<Post> data = postMapper.findByBoard(bid, page*size, size);
+        // 2) count + data
+        int total = postMapper.countByBoardAndSearch(bid, type, keyword, from, to);
+        List<Post> data = postMapper.findByBoardAndSearch(
+                bid, type, keyword, from, to,
+                page * size, size
+        );
         return new PageResultDto.PageResult<>(data, total, page, size);
     }
 
@@ -83,9 +93,24 @@ public class PostRestController {
             @PathVariable Long bid,
             @PathVariable Long id,
             @RequestPart("post") Post post,
-            @RequestPart(value="files", required=false) List<MultipartFile> files
+            @RequestPart(value="files", required=false) List<MultipartFile> files,
+            @RequestPart(value="deleted", required=false) List<Long> deletedIds
     ) throws IOException {
         post.setId(id);
+        // 1) 삭제 대기된 첨부 파일들 먼저 처리
+        if (deletedIds != null) {
+            for (Long aid : deletedIds) {
+                // DB에서 경로 조회
+                Attachment att = attMapper.findById(aid);
+                if (att != null) {
+                    // 실제 파일 삭제
+                    Path file = Paths.get("D:/files", att.getStoragePath().substring("/uploads/".length()));
+                    Files.deleteIfExists(file);
+                }
+                // DB 레코드 삭제
+                attMapper.delete(aid);
+            }
+        }
         post.setBoardId(bid);
         if(postMapper.update(post)==0) return ResponseEntity.notFound().build();
         if(files!=null) for(var f: files){

@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 public class IssueDetail {
     private final Issue issue;
-//    private final List<Attachment> attachments;
+    private final List<Attachment> attachments;
 }
