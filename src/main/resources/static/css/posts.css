@@ -188,6 +188,12 @@ ul li { margin-bottom:6px; }
   border-radius: 12px; /* pill 모양 */
   font-weight: 600;
 }
+/* .post-link 밑줄 제거 & 검정색 텍스트 */
+.post-link,
+.post-link:visited {
+  color: #000;            /* 검정색 (원하는 색상 코드로 변경 가능) */
+  text-decoration: none;  /* 밑줄 제거 */
+}
 
 /* 클래스 data-status-XXX 로 정의했다면 */
 #post-list .cell-status.data-status-OPEN   .badge { background-color: #e2f0d9; color: #2e7d32; }
