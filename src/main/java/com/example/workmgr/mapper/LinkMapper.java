@@ -9,17 +9,15 @@ import java.util.List;
 public interface LinkMapper {
 
     @Select("""
-        SELECT 
-          id, 
-          title, 
-          url, 
-          description, 
-          created_at AS createdAt, 
-          updated_at AS updatedAt 
-        FROM quick_link 
-        ORDER BY created_at DESC
-        """)
-    List<QuickLink> findAll();
+      SELECT
+        id, title, url, description,
+        click_count AS clickCount,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+      FROM quick_link
+      ORDER BY click_count DESC, created_at DESC
+      """)
+    List<QuickLink> findAllOrderByCount();
 
     @Select("""
         SELECT 
@@ -53,4 +51,8 @@ public interface LinkMapper {
 
     @Delete("DELETE FROM quick_link WHERE id = #{id}")
     int delete(@Param("id") Long id);
+
+    @Update("UPDATE quick_link SET click_count = click_count + 1 WHERE id = #{id}")
+    int incrementCount(@Param("id") Long id);
+
 }

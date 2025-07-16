@@ -90,7 +90,7 @@ function renderLinks() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td title="${item.title}">${item.title}</td>
-      <td><a href="${item.url}" target="_blank">${item.url}</a></td>
+      <td><a href="${item.url}" target="_blank" data-id="${item.id}" class="link-item"> ${item.url}</a></td>
       <td>${item.description || ''}</td>
       <td>
         <button class="btn-edit btn btn-secondary" data-id="${item.id}">수정</button>
@@ -159,6 +159,17 @@ document.getElementById('save-link').addEventListener('click', () => {
 });
 
 function attachHandlers() {
+
+  // 클릭 카운트 증가 (mousedown 단계에서 호출)
+  document.querySelectorAll('a.link-item').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.dataset.id;
+      fetch(`/api/links/${id}/click`, { method: 'POST' })
+        .catch(console.error);
+      // 또는 navigator.sendBeacon(`/api/links/${id}/click`);
+    });
+  });
+
   document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.onclick = e => {
       if (!confirm('삭제하시겠습니까?')) return;

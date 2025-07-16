@@ -16,7 +16,7 @@ public class LinkRestController {
 
     @GetMapping
     public List<QuickLink> list() {
-        return linkMapper.findAll();
+        return linkMapper.findAllOrderByCount();
     }
 
     @GetMapping("/{id}")
@@ -25,7 +25,13 @@ public class LinkRestController {
         return link == null ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(link);
     }
-
+    @PostMapping("/{id}/click")
+    public ResponseEntity<Void> click(@PathVariable Long id) {
+        if (linkMapper.incrementCount(id) == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
+    }
     @PostMapping
     public QuickLink create(@RequestBody QuickLink link) {
         linkMapper.insert(link);
