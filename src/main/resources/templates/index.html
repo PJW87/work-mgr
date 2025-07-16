@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>업무 관리</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/links.css"/>
 </head>
 <body>
 <nav>
@@ -14,10 +15,61 @@
   <a href="/tasks">업무관리</a>
   <a href="/issues">공통이슈관리</a>
 </nav>
+
 <div id="content">
   <h1>홈</h1>
   <p>시스템에 오신 것을 환영합니다.</p>
+
+  <!-- ─── 링크관리 섹션 ─── -->
+  <section id="link-section">
+    <h2>자주 쓰는 링크 관리</h2>
+    <div class="search-container">
+      <input type="text"
+             id="link-search"
+             placeholder="검색 (제목 또는 URL)"
+             style="width: 200px; padding: 6px; margin-right: 8px;"/>
+      <button id="btn-clear-search" class="btn btn-secondary">X</button>
+    </div>
+    <button id="btn-add-link" class="btn btn-primary">링크 추가</button>
+    <table class="task-table" style="margin-top:12px;">
+      <thead>
+      <tr>
+        <th>제목</th>
+        <th>URL</th>
+        <th>설명</th>
+        <th>액션</th>
+      </tr>
+      </thead>
+      <tbody id="link-list"></tbody>
+    </table>
+    <div id="link-pager"></div>
+  </section>
 </div>
+
+<!-- 링크 추가/수정 모달 -->
+<div id="modal-link-form" class="modal hidden">
+  <div class="modal-content large">
+    <h2 id="form-title">새 링크</h2>
+    <form id="link-form">
+      <input type="hidden" name="id"/>
+      <div class="form-group">
+        <label>제목<input type="text" name="title" required/></label>
+      </div>
+      <div class="form-group">
+        <label>URL<input type="url" name="url" required placeholder="https://"/></label>
+      </div>
+      <div class="form-group">
+        <label>설명<textarea name="description" rows="3"></textarea></label>
+      </div>
+      <div class="actions">
+        <button type="button" id="save-link" class="btn btn-primary">저장</button>
+        <button type="button" id="cancel-link" class="btn btn-secondary">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="/js/app.js"></script>
+<script src="/js/links/links.js"></script>
 </body>
 </html>

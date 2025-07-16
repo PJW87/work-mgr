@@ -1,0 +1,204 @@
+/* src/main/resources/static/css/links.css */
+
+/* ─── 링크 섹션 컨테이너 ─── */
+#link-section {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+/* 제목 */
+#link-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* 추가 버튼 간격 */
+#btn-add-link {
+  margin-bottom: 12px;
+}
+
+/* ─── 검색바 스타일 (업무관리 소스와 동일하게) ─── */
+.search-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* input 전체 너비 차지 */
+.search-container input[type="text"] {
+  flex: 1;
+  min-width: 0;              /* flex 아이템이 잘 줄어들도록 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.95em;
+  height: 38px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-container input[type="text"]:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 4px rgba(52,152,219,0.3);
+}
+
+/* ✕ 버튼을 btn btn-secondary 스타일 그대로 사용 */
+.search-container button#btn-clear-search {
+  /* .btn, .btn-secondary 클래스 상속 */
+  /* 기존 <button class="btn btn-secondary"> 지우지 마세요! */
+  padding: 0 14px;
+  height: 38px;
+  line-height: 38px;
+  font-size: 0.95em;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.search-container button#btn-clear-search:hover {
+  background: #f7f9fa;
+}
+
+
+/* ─── 링크 테이블 ─── */
+#link-section .task-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fafafa;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+#link-section .task-table th,
+#link-section .task-table td {
+  padding: 12px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #ececec;
+  text-align: center;
+}
+
+#link-section .task-table th {
+  background: #f1f3f5;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+#link-section .task-table th .sort-indicator {
+  position: absolute;
+  right: 8px;
+  font-size: 0.8rem;
+}
+
+#link-section .task-table tr:hover {
+  background: #f7f9fa;
+}
+
+/* URL 컬럼의 링크 스타일 */
+#link-section .task-table a {
+  text-decoration: none;
+  color: #4a90e2;
+}
+#link-section .task-table a:hover {
+  text-decoration: underline;
+}
+
+/* 액션 버튼들 */
+#link-section .btn-edit,
+#link-section .btn-delete {
+  margin-top: 0;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  margin-left: 4px;
+}
+
+/* ─── 모달 ─── */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  overflow: auto;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+#modal-link-form h2 {
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+/* 폼 요소 */
+#modal-link-form .form-group {
+  margin-bottom: 14px;
+}
+#modal-link-form input[type="text"],
+#modal-link-form input[type="url"],
+#modal-link-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+#modal-link-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* 모달 버튼 그룹 */
+#modal-link-form .actions {
+  text-align: right;
+  margin-top: 20px;
+}
+#modal-link-form .actions .btn {
+  margin-left: 10px;
+}
+
+/* ─── 페이저 ─── */
+#link-pager {
+  text-align: center;
+  margin-top: 12px;
+}
+#link-pager .pg-btn {
+  margin: 0 4px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#link-pager .pg-btn.active {
+  background: #4a90e2;
+  color: #fff;
+  border-color: #4a90e2;
+}
+#link-pager .pg-btn:hover:not(.active) {
+  background: #f0f0f0;
+}

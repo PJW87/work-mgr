@@ -6,8 +6,8 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   servlet:
     multipart:
-      max-file-size: 50MB     # 개별 파일(또는 폼 필드)의 최대 허용 크기
-      max-request-size: 50MB   # 전체 요청(파일 + 나머지)의 최대 허용 크기
+      max-file-size: 100MB     # 개별 파일(또는 폼 필드)의 최대 허용 크기
+      max-request-size: 100MB   # 전체 요청(파일 + 나머지)의 최대 허용 크기
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,4 +23,4 @@ server:
   port: 20080
 #  port: 8080
   tomcat:
-    max-http-post-size: 52428800
+    max-http-post-size: 104857600
