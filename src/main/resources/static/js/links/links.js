@@ -22,7 +22,7 @@ document.getElementById('btn-clear-search')
 
 // 페이징 설정
 let currentPage = 1;
-const pageSize = 5;
+const pageSize = 20;
 
 // 정렬 상태
 let sortField = null;
