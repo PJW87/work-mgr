@@ -20,7 +20,7 @@ spring:
     configuration:
       map-underscore-to-camel-case: true
 server:
-  port: 20090
+  port: 20080
 #  port: 8080
   tomcat:
     max-http-post-size: 104857600
