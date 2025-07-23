@@ -89,10 +89,10 @@ public interface TaskMapper {
        AND (#{to}        IS NULL OR t.due_date <  DATE_ADD(#{to}, INTERVAL 1 DAY))
      ORDER BY
        CASE WHEN t.status = 'DONE' THEN 1 ELSE 0 END,
+       CASE WHEN t.status = 'DONE' THEN t.due_date END DESC,
        FIELD(t.priority,'CRITICAL','HIGH','MEDIUM','LOW'),
-       CASE WHEN t.status <> 'DONE' THEN (CASE WHEN t.due_date IS NULL THEN 1 ELSE 0 END) ELSE NULL END,
-       CASE WHEN t.status <> 'DONE' THEN t.due_date ELSE NULL END ASC,
-       CASE WHEN t.status = 'DONE' THEN t.due_date ELSE NULL END DESC
+       CASE WHEN t.due_date IS NULL THEN 1 ELSE 0 END,
+       t.due_date ASC
      LIMIT #{offset}, #{size}
     """)
     List<Task> findPage(
