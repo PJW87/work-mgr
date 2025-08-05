@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const pid = PROJECT_ID;
   const bid = BOARD_ID;
   let page=0, size=10;
+  let totalCount = 0; // 총 게시물 수
 
   // UI 엘리먼트
   const overlay = document.getElementById('modal-overlay');
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       params.set('size', size);
     const res = await fetch(`/api/projects/${pid}/boards/${bid}/posts?${params}`);
     const jr  = await res.json();
+    totalCount = jr.total;
     renderTable(jr.data);
     renderPagination(jr.total, jr.page, jr.size);
   }
@@ -60,7 +62,7 @@ function renderTable(data) {
   tblBody.innerHTML = data.map((p, idx) => `
     <tr>
       <td><input type="checkbox" class="chk-item" data-id="${p.id}"/></td>
-      <td>${idx + 1 + page*size}</td>
+      <td>${totalCount - (page * size + idx)}</td>
       <td>
         <a href="/projects/${pid}/boards/${bid}/posts/${p.id}" class="post-link">
           ${p.title}
